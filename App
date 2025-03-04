@@ -1,0 +1,62 @@
+import React, { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent } from "@/components/ui/card";
+
+const fetchNews = async (query) => {
+  const response = await fetch("/api/getNews", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ query }),
+  });
+  const data = await response.json();
+  return data.articles;
+};
+
+export default function NewsApp() {
+  const [news, setNews] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const topics = [
+    "ADHD",
+    "Autism",
+    "Tourettes",
+    "Dyslexia",
+    "Dyspraxia",
+    "Dyscalculia",
+  ];
+
+  const getNews = async () => {
+    setLoading(true);
+    const articles = await fetchNews(topics.join(" OR "));
+    setNews(articles);
+    setLoading(false);
+  };
+
+  return (
+    <div className="p-6 max-w-3xl mx-auto">
+      <h1 className="text-xl font-bold mb-4">Neurodiversity News</h1>
+      <Button onClick={getNews} disabled={loading}>
+        {loading ? "Loading..." : "Fetch News"}
+      </Button>
+      <div className="mt-4 space-y-4">
+        {news.map((article, index) => (
+          <Card key={index}>
+            <CardContent>
+              <h2 className="font-semibold">{article.title}</h2>
+              <p className="text-sm text-gray-600">{article.source.name}</p>
+              <a
+                href={article.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-500"
+              >
+                Read more
+              </a>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    </div>
+  );
+}
