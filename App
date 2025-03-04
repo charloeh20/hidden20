@@ -13,9 +13,6 @@ const fetchNews = async (query) => {
   return data.articles;
 };
 
-env.local
-NEWS_API_KEY=c179ba8608514c6fb2cc1ce7d81419a6
-
 export default function NewsApp() {
   const [news, setNews] = useState([]);
   const [loading, setLoading] = useState(false);
